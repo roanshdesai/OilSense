@@ -1,0 +1,7 @@
+# Keep LF in the working tree regardless of core.autocrlf.
+# check.sh and arduino_sim.py must stay LF or the shebang breaks on Linux/WSL.
+* text=auto eol=lf
+*.sh   text eol=lf
+*.py   text eol=lf
+*.ino  text eol=lf
+*.h    text eol=lf

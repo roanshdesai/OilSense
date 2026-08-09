@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OilSense - live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-bg:#1d2d3d; --color-surface:#25384c; --color-text:#eef6ff;
+  --color-accent:#94bce3; --color-divider:#2c455d;
+  --font-heading:"Barlow Condensed",system-ui,sans-serif;
+  --font-body:"Barlow",system-ui,sans-serif;
+  --space-1:3.4px; --space-2:6.8px; --space-3:10.2px; --space-4:13.6px;
+  --radius-md:0;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);font-size:15px;line-height:1.55}
+h1,h2,h3,h4{font-family:var(--font-heading);font-weight:600;line-height:1.12;margin:0}
+a{color:var(--color-accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.pnl{position:relative;border:1px solid #2c455d}
+.blueprint{position:relative;border:1px solid var(--color-divider);border-radius:0}
+.blueprint>.corner{position:absolute;width:11px;height:11px;color:#5980a6}
+.blueprint>.corner::before,.blueprint>.corner::after{content:"";position:absolute;background:currentColor}
+.blueprint>.corner::before{left:5px;top:0;width:1px;height:100%}
+.blueprint>.corner::after{top:5px;left:0;width:100%;height:1px}
+.blueprint>.corner.tl{top:-6px;left:-6px}
+.blueprint>.corner.tr{top:-6px;right:-6px}
+.blueprint>.corner.bl{bottom:-6px;left:-6px}
+.blueprint>.corner.br{bottom:-6px;right:-6px}
+#dashLog tbody tr:hover td{background:#25384c}
+#dashLog thead th{position:sticky;top:0;background:#25384c;z-index:1;text-align:right;
+  font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:#94bce3;padding:11px 16px;border-bottom:1px solid #2c455d}
+#dashLog thead th:first-child{text-align:left}
+#dashLog tbody td{padding:9px 16px;text-align:right;border-bottom:1px solid #2c455d;color:#d6ebff}
+#dashLog tbody td:first-child{text-align:left}
+.ctl{background:#25384c;color:#eef6ff;border:1px solid #2c455d;border-radius:0;font-family:var(--font-body)}
+.ctl:focus-visible{outline:2px solid #94bce3;outline-offset:2px}
+.abtn{font-family:"Barlow",sans-serif;font-size:13px;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;background:transparent;border:1px solid #2c455d;border-radius:0;
+  color:#b5d9fd;padding:9px 16px;cursor:pointer}
+.abtn:hover{border-color:#94bce3;color:#94bce3}
+@keyframes dashBreathe{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+@media (max-width:1100px){
+  body [style*="grid-template-columns:minmax(320px, 420px) 1fr"]{grid-template-columns:1fr!important}
+  body [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  body [style*="grid-template-columns:repeat(4, 1fr)"]{grid-template-columns:1fr 1fr!important}
+}
+</style>
+</head>
+<body>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style></style>
+<style>
+  body { margin: 0; background: #1d2d3d; }
+  a { color: #94bce3; text-decoration: none; }
+  a:hover { color: #b5d9fd; }
+  .num { font-variant-numeric: tabular-nums; }
+  .pnl { position: relative; border: 1px solid #2c455d; }
+  .pnl > i.corner { color: #5980a6; }
+  #dashLog tbody tr:hover td { background: #25384c; }
+  #dashLog thead th { position: sticky; top: 0; background: #25384c; z-index: 1;
+    text-align: right; font-weight: 500; font-size: 12px; letter-spacing: .14em;
+    text-transform: uppercase; color: #94bce3; padding: 11px 16px; border-bottom: 1px solid #2c455d; }
+  #dashLog thead th:first-child { text-align: left; }
+  #dashLog tbody td { padding: 9px 16px; text-align: right; border-bottom: 1px solid #2c455d; color: #d6ebff; }
+  #dashLog tbody td:first-child { text-align: left; }
+  .ctl { background: #25384c; color: #eef6ff; border: 1px solid #2c455d; border-radius: 0; }
+  .ctl:focus-visible { outline: 2px solid #94bce3; outline-offset: 2px; }
+  .abtn { font-family: "Barlow", sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; background: transparent; border: 1px solid #2c455d; border-radius: 0;
+    color: #b5d9fd; padding: 9px 16px; cursor: pointer; }
+  .abtn:hover { border-color: #94bce3; color: #94bce3; }
+  @keyframes dashBreathe { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
+</style>
+
+
+<div style="min-height:100vh; background:#1d2d3d; color:#eef6ff; font-family:var(--font-body); font-size:15px; line-height:1.5">
+<div style="max-width:1480px; margin:0 auto; padding:0 32px 72px">
+
+  <header style="display:flex; align-items:center; gap:14px 26px; flex-wrap:wrap; padding:28px 0 20px; border-bottom:1px solid #2c455d; margin-bottom:28px">
+    <div style="display:flex; align-items:center; gap:14px; margin-right:auto">
+      <span style="display:block; width:26px; height:26px; border:2px solid #94bce3; position:relative; flex:none">
+        <span style="position:absolute; inset:6px; background:#94bce3"></span>
+      </span>
+      <span style="font-family:var(--font-heading); font-weight:700; font-size:32px; letter-spacing:.01em; line-height:1; color:#fff">OilSense</span>
+      <span style="width:1px; height:22px; background:#2c455d"></span>
+      <span style="font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:#94bce3">Dual-modality oil monitor</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+      <select id="dashDevice" class="ctl" aria-label="Choose device" style="font-family:var(--font-body); font-size:14px; letter-spacing:.02em; padding:8px 12px; max-width:230px"></select>
+      <span id="dashSource" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; padding:8px 14px; border:1px solid #2c455d; color:#94bce3; white-space:nowrap">
+        <span id="dashDot" style="width:7px; height:7px; background:currentColor; flex:none"></span>
+        <span id="dashSourceText">starting</span>
+      </span>
+      <span id="dashClock" class="num" style="font-size:15px; font-weight:500; letter-spacing:.03em; color:#b5d9fd">—</span>
+    </div>
+  </header>
+
+  <section class="blueprint pnl" style="display:grid; grid-template-columns:minmax(320px, 420px) 1fr">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="padding:26px 30px; display:flex; flex-direction:column; border-right:1px solid #2c455d">
+      <div style="font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:#94bce3">Oil in fryer</div>
+      <h1 id="dashVerdict" style="font-family:var(--font-heading); font-weight:700; font-size:56px; line-height:.92; letter-spacing:-.01em; text-transform:uppercase; margin:10px 0 12px; color:#94bce3">—</h1>
+      <p id="dashVerdictLine" style="font-size:15px; line-height:1.4; color:#b5d9fd; margin:0 0 22px; max-width:34ch">Waiting for the first reading.</p>
+      <div style="font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:#94bce3">Degradation index</div>
+      <div style="display:flex; align-items:flex-end; gap:8px; margin:6px 0 3px">
+        <span id="dashIdx" class="num" style="font-family:var(--font-heading); font-weight:700; font-size:56px; line-height:1; letter-spacing:-.02em; color:#fff">—</span>
+        <span id="dashTpm" class="num" style="font-size:14px; color:#94bce3; padding-bottom:8px"></span>
+      </div>
+      <div id="dashIdxNote" style="font-size:12px; letter-spacing:.06em; color:#94bce3">provisional scale</div>
+      <div id="dashTrust" style="margin-top:auto; padding-top:18px; border-top:1px solid #2c455d; display:flex; align-items:center; gap:9px; font-size:13px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:#94bce3">
+        <span id="dashTrustGlyph" style="font-size:15px">·</span><span id="dashTrustText">no reading</span>
+      </div>
+    </div>
+
+    <div style="padding:26px 30px 20px; display:flex; flex-direction:column">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin-bottom:8px">
+        <div>
+          <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">Concordance rail</div>
+          <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">Two independent channels, one scale</div>
+        </div>
+        <div id="dashDelta" class="num" style="font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3">Δ —</div>
+      </div>
+      <svg id="dashRail" viewBox="0 0 720 176" role="img" aria-label="Capacitive and optical degradation indicators on a shared scale" style="width:100%; height:auto; display:block; margin-top:4px"></svg>
+      <div style="margin-top:14px; padding-top:14px; border-top:1px solid #2c455d; display:flex; gap:26px; flex-wrap:wrap; font-size:13px; color:#94bce3; letter-spacing:.03em">
+        <span style="display:inline-flex; align-items:center; gap:7px; color:#94bce3"><span style="width:15px; height:2px; background:currentColor; flex:none"></span>εr capacitive → <b id="dashFCap" class="num" style="color:#fff; font-weight:600">—</b></span>
+        <span style="display:inline-flex; align-items:center; gap:7px; color:#eef6ff"><span style="width:15px; height:2px; background:currentColor; flex:none"></span>Λ optical → <b id="dashFOpt" class="num" style="color:#fff; font-weight:600">—</b></span>
+        <span>tolerance <b id="dashFTol" class="num" style="color:#eef6ff; font-weight:600">±0.15</b></span>
+        <span>readings <b id="dashFCount" class="num" style="color:#eef6ff; font-weight:600">0</b></span>
+      </div>
+    </div>
+
+    <div style="grid-column:1 / -1; display:grid; grid-template-columns:repeat(4, 1fr); border-top:1px solid #2c455d">
+    <div style="padding:18px 22px 20px 30px; border-right:1px solid #2c455d">
+      <div style="font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#94bce3">Relative permittivity</div>
+      <div id="dashEps" class="num" style="font-family:var(--font-heading); font-weight:600; font-size:34px; line-height:1.1; margin-top:6px; color:#fff">—</div>
+      <div id="dashEpsNote" style="font-size:13px; color:#94bce3; margin-top:4px">temperature-corrected</div>
+    </div>
+    <div style="padding:18px 22px; border-right:1px solid #2c455d">
+      <div style="font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#94bce3">Optical ratio 435/940</div>
+      <div id="dashOpt" class="num" style="font-family:var(--font-heading); font-weight:600; font-size:34px; line-height:1.1; margin-top:6px; color:#fff">—</div>
+      <div style="font-size:13px; color:#94bce3; margin-top:4px">short-wavelength vs near-IR</div>
+    </div>
+    <div style="padding:18px 22px; border-right:1px solid #2c455d">
+      <div style="font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#94bce3">Sample temperature</div>
+      <div id="dashTemp" class="num" style="font-family:var(--font-heading); font-weight:600; font-size:34px; line-height:1.1; margin-top:6px; color:#fff">—</div>
+      <div id="dashTempNote" style="font-size:13px; color:#94bce3; margin-top:4px">at probe</div>
+    </div>
+    <div style="padding:18px 30px 20px 22px">
+      <div style="font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#94bce3">Dispersion <span style="text-transform:none">σ</span></div>
+      <div id="dashSd" class="num" style="font-family:var(--font-heading); font-weight:600; font-size:34px; line-height:1.1; margin-top:6px; color:#fff">—</div>
+      <div id="dashSdNote" style="font-size:13px; color:#94bce3; margin-top:4px">over 64 determinations</div>
+    </div>
+    </div>
+  </section>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px">
+    <section class="blueprint pnl" style="padding:22px 24px 18px; min-width:0">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:14px; margin-bottom:16px">
+        <div>
+          <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">Spectral profile</div>
+          <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">18 channels · 410–940 nm</div>
+        </div>
+        <div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3">Bars coloured by wavelength</div>
+      </div>
+      <svg id="dashSpec" viewBox="0 0 560 264" role="img" aria-label="Absorbance across 18 wavelength channels compared with fresh oil" style="width:100%; height:auto; display:block; overflow:visible"></svg>
+    </section>
+
+    <section class="blueprint pnl" style="padding:22px 24px 18px; min-width:0">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex; justify-content:space-between; align-items:baseline; gap:14px; margin-bottom:16px">
+        <div>
+          <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">History</div>
+          <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">This oil since first reading</div>
+        </div>
+        <div id="dashToggles" style="display:flex; gap:6px">
+          <button type="button" class="ctl" data-series="index" aria-pressed="true" style="font-family:var(--font-body); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; background:#94bce3; border-color:#94bce3; color:#1d2d3d; padding:5px 11px; cursor:pointer">Index</button>
+          <button type="button" class="ctl" data-series="eps" aria-pressed="false" style="font-family:var(--font-body); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; background:transparent; color:#94bce3; padding:5px 11px; cursor:pointer"><span style="text-transform:none">εr</span></button>
+          <button type="button" class="ctl" data-series="opt" aria-pressed="false" style="font-family:var(--font-body); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; background:transparent; color:#94bce3; padding:5px 11px; cursor:pointer">Λ</button>
+        </div>
+      </div>
+      <svg id="dashHist" viewBox="0 0 560 264" role="img" aria-label="Degradation index over time" style="width:100%; height:auto; display:block; overflow:visible"></svg>
+    </section>
+  </div>
+
+  <section class="blueprint pnl" style="margin-top:20px; padding:22px 24px 18px">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:14px; margin-bottom:16px">
+      <div>
+        <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">Cross-validation map</div>
+        <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">Every reading, capacitive against optical</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:22px; flex-wrap:wrap; font-size:13px; color:#b5d9fd">
+        <span style="display:inline-flex; align-items:center; gap:8px"><span style="width:9px; height:9px; border-radius:50%; background:#94bce3; opacity:.6; flex:none"></span>earlier readings</span>
+        <span style="display:inline-flex; align-items:center; gap:8px"><span style="width:9px; height:9px; border-radius:50%; background:#eef6ff; flex:none"></span>current reading</span>
+        <span style="display:inline-flex; align-items:center; gap:8px"><span style="width:9px; height:9px; border-radius:50%; border:2px solid #e28175; flex:none"></span>flagged — channels disagree</span>
+        <span style="color:#94bce3; letter-spacing:.12em; text-transform:uppercase; font-size:12px">Inside the corridor = trustworthy</span>
+        <span style="width:100%; color:#b5d9fd; font-size:13px">Both channels track the same degradation, so drift off the diagonal is a measurement problem, not oil.</span>
+      </div>
+    </div>
+    <svg id="dashXv" viewBox="0 0 1160 340" role="img" aria-label="Scatter of capacitive against optical indicators with agreement corridor" style="width:100%; height:auto; display:block; overflow:visible"></svg>
+  </section>
+
+  <section class="blueprint pnl" style="min-width:0; margin-top:20px">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; padding:20px 24px 16px">
+      <div>
+        <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">Reading log</div>
+        <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">Newest first</div>
+      </div>
+      <button type="button" id="dashCsv" class="abtn">Download CSV</button>
+    </div>
+    <div style="overflow-x:auto; max-height:420px; overflow-y:auto; border-top:1px solid #2c455d">
+      <table id="dashLog" style="width:100%; border-collapse:collapse; font-size:13px; white-space:nowrap">
+        <thead><tr>
+          <th>Time</th><th>T °C</th><th>C pF</th><th><span style="text-transform:none">σ</span> pF</th><th><span style="text-transform:none">εr</span></th><th>Λ</th><th>Index</th><th>TPM-eq</th><th>Channels</th>
+        </tr></thead>
+        <tbody id="dashLogBody"><tr><td colspan="9" style="padding:44px 22px; text-align:center; color:#94bce3">No readings yet.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="blueprint pnl" style="padding:22px 24px 20px; min-width:0; margin-top:20px">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.02em; color:#fff">Probe calibration</div>
+        <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#94bce3; margin-top:3px">Cell constant and parasitic offset</div>
+      </div>
+      <button type="button" id="dashCalReset" class="abtn">Reset to measured</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:16px 20px">
+      <div><label for="dashK" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Cell constant pF/<span style="text-transform:none">ε</span></label><input id="dashK" class="ctl num" type="number" step="0.1" value="0.262" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashP" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Parasitic offset pF</label><input id="dashP" class="ctl num" type="number" step="0.1" value="6.364" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashTc" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Temp coeff /°C</label><input id="dashTc" class="ctl num" type="number" step="0.0001" value="-0.0015" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashT0" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Reference temp °C</label><input id="dashT0" class="ctl num" type="number" step="1" value="30" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashEf" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px"><span style="text-transform:none">εr</span> fresh</label><input id="dashEf" class="ctl num" type="number" step="0.01" value="3.00" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashEd" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px"><span style="text-transform:none">εr</span> at discard</label><input id="dashEd" class="ctl num" type="number" step="0.01" value="3.55" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashLf" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Λ fresh</label><input id="dashLf" class="ctl num" type="number" step="0.01" value="1.3625" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashLd" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Λ at discard</label><input id="dashLd" class="ctl num" type="number" step="0.01" value="1.0738" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+      <div><label for="dashTol" style="display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#94bce3; margin-bottom:6px">Agreement tolerance</label><input id="dashTol" class="ctl num" type="number" step="0.01" value="0.15" style="width:100%; font-family:var(--font-body); font-size:15px; padding:8px 10px"></div>
+    </div>
+    <div id="dashFom" style="margin-top:20px; padding:16px 18px; border-left:3px solid #94bce3; background:#25384c; font-size:14px; line-height:1.45; color:#d6ebff">—</div>
+  </section>
+
+  <footer style="margin-top:34px; padding-top:18px; border-top:1px solid #2c455d; font-size:13px; color:#94bce3; display:flex; gap:24px; flex-wrap:wrap">
+    <span>Thresholds: advisory 20 % TPM, discard 25 % (FSSAI limit for used oil).</span>
+    <span id="dashFootSrc"></span>
+  </footer>
+
+</div>
+</div>
+
+<script>
+
+/* ============================ CONFIG ============================
+   Reads the database over plain HTTPS. No API key, no Firebase SDK -
+   the same route the ESP32 uses to write.
+
+   Requires the database rules to be open:
+       { "rules": { ".read": true, ".write": true } }
+
+   Realtime uses EventSource (server-sent events), which the Realtime
+   Database REST endpoint supports natively. If that is blocked it falls
+   back to polling, and if there is no data at all it falls back to the
+   built-in demo so the page is never blank.
+   ================================================================ */
+const DB      = 'https://YOUR-PROJECT-default-rtdb.REGION.firebasedatabase.app';
+const DEVICE  = 'probe-01';
+const POLL_MS = 4000;
+
+const NM = [410,435,460,485,510,535,560,585,610,645,680,705,730,760,810,860,900,940];
+const CH_SHORT = 1, CH_NIR = 17;
+
+const C = {
+  bg: '#1d2d3d', panel: '#25384c',
+  ink: '#eef6ff', mute: '#749dc4',
+  grid: '#2c455d', gridSoft: '#243748', rule: '#2c455d',
+  steel: '#94bce3', steelDim: '#5980a6', steelTint: 'rgba(148,188,227,.14)',
+  warn: '#e0a253', warnTint: 'rgba(224,162,83,.15)',
+  bad: '#e28175', badTint: 'rgba(226,129,117,.16)',
+  good: '#94bce3'
+};
+
+const FAULT_COPY = {
+  moisture: ['Permittivity is running high while the optics barely moved — that pattern means water in the sample.', 'moisture suspected'],
+  particulate: ['The optics darkened without a matching permittivity rise — suspended solids, or a dirty window.', 'particulate or fouling'],
+  unstable: ['The 64 determinations disagree with each other. Check the probe connection and let bubbles settle.', 'reading unstable']
+};
+
+const FONT = 'Barlow, sans-serif';
+const svgNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, text) {
+  const n = document.createElementNS(svgNS, tag);
+  for (const k in (attrs || {})) n.setAttribute(k, attrs[k]);
+  if (text != null) n.textContent = text;
+  return n;
+}
+const fmt = (v, d) => (v == null || Number.isNaN(v)) ? '—' : v.toFixed(d == null ? 2 : d);
+const hhmm = ts => new Date(ts).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
+function nmToRgb(nm) {
+  let r = 0, g = 0, b = 0;
+  if (nm >= 380 && nm < 440) { r = -(nm - 440) / 60; b = 1; }
+  else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
+  else if (nm < 510) { g = 1; b = -(nm - 510) / 20; }
+  else if (nm < 580) { r = (nm - 510) / 70; g = 1; }
+  else if (nm < 645) { r = 1; g = -(nm - 645) / 65; }
+  else if (nm < 781) { r = 1; }
+  else { const f = Math.max(.36, 1 - (nm - 780) / 300); return `rgb(${Math.round(158 * f)},${Math.round(104 * f)},${Math.round(94 * f)})`; }
+  let f = 1;
+  if (nm < 420) f = .42 + .58 * (nm - 380) / 40;
+  else if (nm > 700) f = .42 + .58 * (780 - nm) / 80;
+  const c = v => Math.round(255 * Math.pow(Math.max(0, v) * f, .8));
+  return `rgb(${c(r)},${c(g)},${c(b)})`;
+}
+const CH_COLORS = NM.map(nmToRgb);
+
+class Dash {
+  start() {
+    // measured 7 Aug: air 6.394 pF, fresh 7.766 pF at 30 C -> K 0.686, P 5.708.
+    // optFresh is the measured fresh-oil 435/940 ratio. optDiscard is anchored to
+    // the amber sample, which is an ASSUMPTION - it needs a known-TPC reference.
+    this.cal = { K: 0.262, P: 6.364, tc: -0.0015, T0: 30, epsFresh: 3.00, epsDiscard: 3.55, optFresh: 1.3625, optDiscard: 1.0738, tol: 0.15, sdLimit: 0.15 };
+    this.calMeasured = Object.assign({}, this.cal);
+    this.st = { readings: [], device: 'probe-01', devices: ['probe-01'], series: 'index' };
+    this.timers = [];
+    this.wire();
+    this.startLive();
+    this.tick();
+    this.timers.push(setInterval(() => this.tick(), 1000));
+  }
+
+  $(id) { return document.getElementById(id); }
+  tick() { const c = this.$('dashClock'); if (c) c.textContent = new Date().toLocaleTimeString('en-IN', { hour12: false }) + ' IST'; }
+
+  /* ---------- maths ---------- */
+  /* The capacitive channel only gets a vote if the span it must resolve is
+     bigger than its own scatter. At K=0.262 the whole fresh-to-discard range
+     is 0.144 pF against ~0.07 pF of noise, so it cannot. Fix the electrode
+     geometry, K rises, and this returns true on its own - nothing to toggle. */
+  capCredible() {
+    const span = Math.abs(this.cal.K * (this.cal.epsDiscard - this.cal.epsFresh));
+    // Prefer run-to-run spread when the device reports it - it is the honest
+    // error. Within-measurement sd is always optimistic.
+    let noise = null;
+    const spreads = this.st.readings.map(r => r.cap_spread_pf).filter(v => v != null && v > 0);
+    const sds     = this.st.readings.map(r => r.cap_sd_pf).filter(v => v != null && v > 0);
+    const pick = spreads.length ? spreads : sds;
+    if (pick.length) { pick.sort((a, b) => a - b); noise = pick[Math.floor(pick.length / 2)]; }
+    if (noise == null) return span > 1.0;
+
+    /* Factor of 5, not 2. Two only distinguishes the two endpoints; the scale
+       has a threshold at 0.70 that has to be told apart from both 0 and 1, so
+       three levels at roughly 3 sigma separation needs about 6x. Five is the
+       lenient end of that. At K=0.262 the span is 0.144 pF against ~0.07 pF
+       of noise, so the channel is excluded - correctly. */
+    if (!(span > 5 * noise)) return false;
+
+    /* Sigma only sees random noise. A stale cell constant produces a rock-steady
+       reading that is still nonsense - this session had sigma of 0.005 pF and a
+       derived permittivity of 9.1. No edible oil is above about 4.5, so a value
+       outside the physical range means the calibration is wrong, however quiet
+       the measurement looks. That is not a channel worth a vote. */
+    const eps = this.st.readings
+      .map(r => (r.cap_pf - this.cal.P) / this.cal.K)
+      .filter(v => isFinite(v));
+    if (!eps.length) return true;
+    eps.sort((a, b) => a - b);
+    const med = eps[Math.floor(eps.length / 2)];
+    return med > 2.0 && med < 5.0;
+  }
+
+  permittivity(capPf, tempC) {
+    return (capPf - this.cal.P) / this.cal.K - this.cal.tc * (tempC - this.cal.T0);
+  }
+  normCap(eps) { return Math.max(0, Math.min(1.35, (eps - this.cal.epsFresh) / (this.cal.epsDiscard - this.cal.epsFresh))); }
+  normOpt(L) {
+    if (!(L > 0) || !(this.cal.optFresh > 0) || !(this.cal.optDiscard > 0)) return null;
+    const span = Math.log(this.cal.optFresh / this.cal.optDiscard);
+    if (!(Math.abs(span) > 1e-9)) return null;
+    return Math.max(0, Math.min(1.35, Math.log(this.cal.optFresh / L) / span));
+  }
+  derive(r) {
+    const eps = this.permittivity(r.cap_pf, r.temp_c);
+    const L = r.opt_ratio != null ? r.opt_ratio : (r.channels && r.channels[CH_NIR] !== 0 ? r.channels[CH_SHORT] / r.channels[CH_NIR] : null);
+    const capOk = this.capCredible();
+    const nc = capOk ? this.normCap(eps) : null;
+    const no = L != null ? this.normOpt(L) : null;
+
+    // whichever channels are allowed to speak
+    let idx, note;
+    if (nc != null && no != null) { idx = 0.5 * nc + 0.5 * no; note = 'both channels agree'; }
+    else if (no != null)          { idx = no; note = 'optical only'; }
+    else if (nc != null)          { idx = nc; note = 'capacitive only'; }
+    else                          { idx = null; note = 'no valid channel'; }
+
+    const delta = (nc != null && no != null) ? Math.abs(nc - no) : null;
+
+    // Dispersion is a hardware fault and overrides. Disagreement is only
+    // meaningful when BOTH channels are credible - otherwise there is nothing
+    // to disagree with, and forcing HOLD would just hide the working channel.
+    let fault = null;
+    if (r.cap_sd_pf != null && r.cap_sd_pf > this.cal.sdLimit) fault = 'unstable';
+    else if (delta != null && delta > this.cal.tol) fault = nc > no ? 'moisture' : 'particulate';
+
+    return Object.assign({}, r, { eps, L, nc, no, idx, delta, fault, note, capOk,
+                                  tpm: idx == null ? null : 8 + 17 * idx });
+  }
+  /* No keep/discard call. The absolute scale is not anchored against a known
+     TPC reference yet, so the honest output is the measurement and which
+     channels produced it - not a food-safety instruction. The 20 % and 25 %
+     regulatory marks stay on the rail as reference, unlabelled by verdict. */
+  verdictFor(d) {
+    if (d.fault === 'unstable')
+      return { word: 'UNSTABLE', color: C.mute,
+               line: 'The 64 determinations disagree with each other. Let the probe settle and re-read.' };
+    if (d.idx == null)
+      return { word: 'NO SIGNAL', color: C.mute,
+               line: 'Neither channel can resolve this sample.' };
+    if (d.idx >= 1.34)
+      return { word: 'OFF SCALE', color: C.warn,
+               line: 'The reading is past the end of the current scale, so the index is pinned. '
+                     + 'The fresh reference is wrong for this session - set the calibration panel '
+                     + 'from a fresh sample measured now.' };
+    if (d.fault)
+      return { word: 'MEASURED', color: C.warn,
+               line: 'Channels disagree by ' + fmt(d.delta, 2) + ', beyond the ' +
+                     fmt(this.cal.tol, 2) + ' tolerance. ' + FAULT_COPY[d.fault][0] };
+    const src = d.capOk
+      ? 'Both channels resolved this sample and agree within tolerance.'
+      : 'Optical channel only - the capacitive channel is below resolution at this cell constant, so it is excluded rather than averaged in.';
+    return { word: 'MEASURED', color: C.steel, line: src };
+  }
+
+  /* ---------- hero ---------- */
+  renderHero() {
+    const rows = this.st.readings;
+    if (!rows.length) return;
+    const d = this.derive(rows[rows.length - 1]);
+    const v = this.verdictFor(d);
+    const w = this.$('dashVerdict');
+    w.textContent = v.word; w.style.color = v.color;
+    this.$('dashVerdictLine').textContent = v.line;
+    this.$('dashIdx').textContent = fmt(d.idx, 2);
+    this.$('dashTpm').textContent = d.tpm == null ? '' : `≈ ${fmt(d.tpm, 1)} % TPM-eq`;
+    this.$('dashIdxNote').textContent = 'provisional scale - not anchored to a TPC reference';
+
+    const t = this.$('dashTrust');
+    t.style.color = d.fault ? C.bad : C.good;
+    this.$('dashTrustGlyph').textContent = d.fault ? '⚠' : '✓';
+    this.$('dashTrustText').textContent = d.fault ? FAULT_COPY[d.fault][1] : (d.note || 'channels agree');
+
+    this.$('dashEps').textContent = fmt(d.eps, 3);
+    this.$('dashEpsNote').textContent = `raw C ${fmt(d.cap_pf, 2)} pF, normalised to ${this.cal.T0} °C`;
+    this.$('dashOpt').textContent = fmt(d.L, 3);
+    this.$('dashTemp').innerHTML = `${fmt(d.temp_c, 1)}<span style="font-size:15px; color:#94bce3; margin-left:4px">°C</span>`;
+    this.$('dashTempNote').textContent = Math.abs(d.temp_c - this.cal.T0) > 8 ? 'far from reference — let it settle' : 'at probe';
+    this.$('dashSd').innerHTML = `${fmt(d.cap_sd_pf, 3)}<span style="font-size:15px; color:#94bce3; margin-left:4px">pF</span>`;
+    const sdn = this.$('dashSdNote'), over = d.cap_sd_pf > this.cal.sdLimit;
+    sdn.textContent = over ? 'above limit — reading not reliable' : 'over 64 determinations';
+    sdn.style.color = over ? C.bad : C.mute;
+
+    this.$('dashFCap').textContent = d.nc == null ? 'n/r' : fmt(d.nc, 2);
+    this.$('dashFOpt').textContent = d.no == null ? '—' : fmt(d.no, 2);
+    this.$('dashFTol').textContent = '±' + fmt(this.cal.tol, 2);
+    this.$('dashFCount').textContent = rows.length;
+    this.$('dashDelta').textContent = 'Δ ' + (d.delta == null ? '—' : fmt(d.delta, 3));
+    this.drawRail(d);
+  }
+
+  drawRail(d) {
+    const s = this.$('dashRail'); s.innerHTML = '';
+    const x0 = 54, x1 = 666, y = 96, len = x1 - x0;
+    const px = v => x0 + Math.max(0, Math.min(1.2, v)) / 1.2 * len;
+
+    // One neutral fill. Traffic-light zones read as a safety instruction, and
+    // the scale is not anchored to a TPC reference yet, so it would be claiming
+    // more than the measurement supports. The 20/25 % ticks stay as reference.
+    s.appendChild(el('rect', { x: x0, y: y - 13, width: len, height: 26, fill: C.steelTint }));
+    s.appendChild(el('rect', { x: x0, y: y - 13, width: len, height: 26, fill: 'none', stroke: C.rule, 'stroke-width': 1 }));
+
+    [[.70, '20 %'], [1.0, '25 %']].forEach(p => {
+      const X = px(p[0]);
+      s.appendChild(el('line', { x1: X, y1: y - 22, x2: X, y2: y + 22, stroke: C.steelDim, 'stroke-width': 1, 'stroke-dasharray': '3 3' }));
+      s.appendChild(el('text', { x: X, y: y + 38, fill: C.mute, 'font-size': 20, 'font-family': FONT, 'text-anchor': 'middle', 'letter-spacing': '1.4' }, p[1]));
+    });
+    const XC = d.nc == null ? null : px(d.nc), XO = d.no == null ? null : px(d.no);
+    // end labels yield to a needle parked over them
+    const near = v => [d.nc, d.no].some(n => n != null && Math.abs(Math.min(1.2, n) - v) < 0.14);
+    if (!near(0)) s.appendChild(el('text', { x: x0, y: y + 38, fill: C.mute, 'font-size': 20, 'font-family': FONT, 'letter-spacing': '1.4' }, 'LOW'));
+    if (!near(1.2)) s.appendChild(el('text', { x: x1, y: y + 38, fill: C.mute, 'font-size': 20, 'font-family': FONT, 'text-anchor': 'end', 'letter-spacing': '1.4' }, 'HIGH'));
+    if (XO != null && XC != null) {
+      const bad = d.delta > this.cal.tol, a = Math.min(XC, XO), b = Math.max(XC, XO);
+      if (b - a > 1.2) s.appendChild(el('rect', { x: a, y: y - 13, width: b - a, height: 26, fill: bad ? 'rgba(226,129,117,.38)' : 'rgba(148,188,227,.26)' }));
+      s.appendChild(el('rect', { x: a - 1, y: y + 16, width: Math.max(2, b - a + 2), height: 2, fill: bad ? C.bad : C.good }));
+    }
+
+    const needle = (X, dir, color, glyph, val) => {
+      const g = el('g', {});
+      const tipY = dir < 0 ? y - 13 : y + 13, baseY = dir < 0 ? y - 44 : y + 52;
+      g.appendChild(el('path', { d: `M${X} ${tipY} L${X - 7} ${baseY} L${X + 7} ${baseY} Z`, fill: color, opacity: .95 }));
+      g.appendChild(el('line', { x1: X, y1: tipY, x2: X, y2: baseY, stroke: color, 'stroke-width': 1.5 }));
+      g.appendChild(el('text', { x: X, y: dir < 0 ? baseY - 9 : baseY + 19, fill: color, 'font-size': 21, 'font-weight': 600, 'font-family': FONT, 'text-anchor': 'middle' }, `${glyph} ${val}`));
+      s.appendChild(g);
+    };
+    if (d.nc != null) needle(XC, -1, C.steel, 'ε', fmt(d.nc, 2));
+    if (XO != null) needle(XO, 1, C.ink, 'Λ', fmt(d.no, 2));
+    else s.appendChild(el('text', { x: (x0 + x1) / 2, y: y + 62, fill: C.mute, 'font-size': 20, 'font-family': FONT, 'text-anchor': 'middle' }, 'optical channel not reporting'));
+  }
+
+  /* ---------- spectrum ---------- */
+  renderSpectrum() {
+    const s = this.$('dashSpec'); s.innerHTML = '';
+    const rows = this.st.readings;
+    const W = 560, H = 264, L = 42, R = 12, T = 14, B = 46;
+    const iw = W - L - R, ih = H - T - B;
+    if (!rows.length) return;
+    const cur = rows[rows.length - 1].channels, base = rows[0].channels;
+    if (!cur) { s.appendChild(el('text', { x: W / 2, y: H / 2, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'text-anchor': 'middle' }, 'no spectral data')); return; }
+    const max = Math.max.apply(null, cur.concat(base || cur)) * 1.08;
+    const bw = iw / NM.length;
+
+    [0, .5, 1].forEach(f => {
+      const Y = T + ih - f * ih;
+      s.appendChild(el('line', { x1: L, y1: Y, x2: W - R, y2: Y, stroke: C.grid, 'stroke-width': 1 }));
+      s.appendChild(el('text', { x: L - 7, y: Y + 3.5, fill: C.mute, 'font-size': 16.5, 'font-family': FONT, 'text-anchor': 'end' }, Math.round(max * f)));
+    });
+
+    cur.forEach((v, i) => {
+      const h = Math.max(1, v / max * ih), x = L + i * bw + bw * .17, w = bw * .66;
+      s.appendChild(el('rect', { x, y: T + ih - h, width: w, height: h, fill: CH_COLORS[i], opacity: .9 }));
+      if (i % 3 === 0 || i === NM.length - 1)
+        s.appendChild(el('text', { x: x + w / 2, y: H - B + 16, fill: C.mute, 'font-size': 16.5, 'font-family': FONT, 'text-anchor': 'middle' }, NM[i]));
+    });
+
+    if (base && rows.length > 1) {
+      const pts = base.map((v, i) => `${L + i * bw + bw / 2},${T + ih - v / max * ih}`).join(' ');
+      s.appendChild(el('polyline', { points: pts, fill: 'none', stroke: C.ink, 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: .55 }));
+    }
+    s.appendChild(el('text', { x: L, y: H - 8, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'letter-spacing': '1.2' }, 'WAVELENGTH nm'));
+    if (rows.length > 1) s.appendChild(el('text', { x: W - R, y: H - 8, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'text-anchor': 'end', 'letter-spacing': '1.2' }, '╌╌ fresh oil'));
+  }
+
+  /* ---------- history ---------- */
+  renderHistory() {
+    const s = this.$('dashHist'); s.innerHTML = '';
+    const rows = this.st.readings.map(r => this.derive(r));
+    const W = 560, H = 264, L = 44, R = 14, T = 14, B = 40;
+    const iw = W - L - R, ih = H - T - B;
+    if (!rows.length) return;
+    const spec = {
+      index: { get: d => d.idx, color: C.steel, lo: 0, hi: 1.25, label: 'DEGRADATION INDEX' },
+      eps: { get: d => d.eps, color: '#b5d9fd', lo: this.cal.epsFresh - .12, hi: this.cal.epsDiscard + .12, label: 'PERMITTIVITY εr' },
+      opt: { get: d => d.L, color: C.good, lo: this.cal.optDiscard - .06, hi: this.cal.optFresh + .06, label: 'OPTICAL RATIO Λ' }
+    }[this.st.series];
+
+    const x = i => L + (rows.length < 2 ? iw / 2 : i / (rows.length - 1) * iw);
+    const y = v => T + ih - (Math.max(spec.lo, Math.min(spec.hi, v)) - spec.lo) / (spec.hi - spec.lo) * ih;
+
+    [0, .25, .5, .75, 1].forEach(f => {
+      const Y = T + ih - f * ih, val = spec.lo + f * (spec.hi - spec.lo);
+      s.appendChild(el('line', { x1: L, y1: Y, x2: W - R, y2: Y, stroke: C.grid, 'stroke-width': 1 }));
+      s.appendChild(el('text', { x: L - 7, y: Y + 3.5, fill: C.mute, 'font-size': 16.5, 'font-family': FONT, 'text-anchor': 'end' }, val.toFixed(2)));
+    });
+    if (this.st.series === 'index') [[.70, C.warn], [1.0, C.bad]].forEach(p => {
+      if (p[0] >= spec.lo && p[0] <= spec.hi) s.appendChild(el('line', { x1: L, y1: y(p[0]), x2: W - R, y2: y(p[0]), stroke: p[1], 'stroke-width': 1, 'stroke-dasharray': '4 3', opacity: .7 }));
+    });
+
+    const pts = rows.map((d, i) => [x(i), y(spec.get(d))]).filter(p => !Number.isNaN(p[1]) && p[1] != null);
+    if (pts.length > 1) {
+      s.appendChild(el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: spec.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+      s.appendChild(el('polygon', { points: [[L, T + ih]].concat(pts, [[pts[pts.length - 1][0], T + ih]]).map(p => p.join(',')).join(' '), fill: spec.color, opacity: .12 }));
+    }
+    rows.forEach((d, i) => {
+      if (d.fault) s.appendChild(el('circle', { cx: x(i), cy: y(spec.get(d)), r: 4, fill: C.bg, stroke: C.bad, 'stroke-width': 2 }));
+      else if (i === rows.length - 1) s.appendChild(el('circle', { cx: x(i), cy: y(spec.get(d)), r: 4, fill: spec.color }));
+    });
+    s.appendChild(el('text', { x: L + iw / 2, y: H - 8, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'text-anchor': 'middle', 'letter-spacing': '1.2' }, spec.label));
+    if (rows.length > 1) {
+      s.appendChild(el('text', { x: L, y: H - 8, fill: C.mute, 'font-size': 16.5, 'font-family': FONT }, hhmm(rows[0].ts)));
+      s.appendChild(el('text', { x: W - R, y: H - 8, fill: C.mute, 'font-size': 16.5, 'font-family': FONT, 'text-anchor': 'end' }, hhmm(rows[rows.length - 1].ts)));
+    }
+  }
+
+  /* ---------- cross-validation ---------- */
+  renderXV() {
+    const s = this.$('dashXv'); s.innerHTML = '';
+    const rows = this.st.readings.map(r => this.derive(r)).filter(d => d.no != null && d.nc != null);
+    const W = 1160, H = 340, L = 78, R = 26, T = 16, B = 50;
+    const iw = W - L - R, ih = H - T - B, hi = 1.25;
+    const X = v => L + Math.max(0, Math.min(hi, v)) / hi * iw;
+    const Y = v => T + ih - Math.max(0, Math.min(hi, v)) / hi * ih;
+    const t = this.cal.tol;
+
+    s.appendChild(el('polygon', { points: [[X(0), Y(t)], [X(hi - t), Y(hi)], [X(hi), Y(hi)], [X(hi), Y(hi - t)], [X(t), Y(0)], [X(0), Y(0)]].map(p => p.join(',')).join(' '), fill: 'rgba(148,188,227,.12)' }));
+    s.appendChild(el('line', { x1: X(0), y1: Y(0), x2: X(hi), y2: Y(hi), stroke: C.good, 'stroke-width': 1.4, opacity: .7 }));
+    [[t, 1], [t, -1]].forEach(p => s.appendChild(el('line', {
+      x1: X(0), y1: Y(p[1] > 0 ? p[0] : 0), x2: X(p[1] > 0 ? hi - p[0] : hi), y2: Y(p[1] > 0 ? hi : hi - p[0]),
+      stroke: C.good, 'stroke-width': 1, 'stroke-dasharray': '5 4', opacity: .45
+    })));
+
+    [0, .25, .5, .75, 1, 1.25].forEach(v => {
+      s.appendChild(el('line', { x1: X(v), y1: T, x2: X(v), y2: T + ih, stroke: C.gridSoft, 'stroke-width': 1 }));
+      s.appendChild(el('line', { x1: L, y1: Y(v), x2: L + iw, y2: Y(v), stroke: C.gridSoft, 'stroke-width': 1 }));
+      s.appendChild(el('text', { x: X(v), y: T + ih + 19, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'text-anchor': 'middle' }, v.toFixed(2)));
+      if (v > 0) s.appendChild(el('text', { x: L - 9, y: Y(v) + 3.5, fill: C.mute, 'font-size': 17, 'font-family': FONT, 'text-anchor': 'end' }, v.toFixed(2)));
+    });
+    s.appendChild(el('text', { x: L + iw / 2, y: H - 14, fill: C.mute, 'font-size': 15.5, 'font-family': FONT, 'text-anchor': 'middle', 'letter-spacing': '1.5' }, 'CAPACITIVE ε  →'));
+    s.appendChild(el('text', { x: 20, y: T + ih / 2, fill: C.mute, 'font-size': 15.5, 'font-family': FONT, 'text-anchor': 'middle', 'letter-spacing': '1.5', transform: `rotate(-90 20 ${T + ih / 2})` }, 'OPTICAL Λ  →'));
+    s.appendChild(el('text', { x: X(.10), y: Y(1.14), fill: C.ink, 'font-size': 16, 'font-family': FONT, opacity: .78 }, 'optics ahead → particulate / fouling'));
+    s.appendChild(el('text', { x: X(.66), y: Y(.10), fill: C.steel, 'font-size': 16, 'font-family': FONT, opacity: .85 }, 'permittivity ahead → moisture'));
+
+    rows.forEach((d, i) => {
+      const last = i === rows.length - 1, bad = !!d.fault;
+      const c = bad ? C.bad : (last ? C.ink : C.steel);
+      if (last) {
+        s.appendChild(el('line', { x1: X(d.nc) - 12, y1: Y(d.no), x2: X(d.nc) + 12, y2: Y(d.no), stroke: c, 'stroke-width': 1 }));
+        s.appendChild(el('line', { x1: X(d.nc), y1: Y(d.no) - 12, x2: X(d.nc), y2: Y(d.no) + 12, stroke: c, 'stroke-width': 1 }));
+      }
+      s.appendChild(el('circle', { cx: X(d.nc), cy: Y(d.no), r: last ? 5.5 : 3.6, fill: bad ? C.bg : c, stroke: bad ? c : 'none', 'stroke-width': 2, opacity: last || bad ? 1 : .55 }));
+    });
+
+  }
+
+  /* ---------- log + calibration ---------- */
+  renderLog() {
+    const b = this.$('dashLogBody');
+    const rows = this.st.readings.map(r => this.derive(r)).reverse();
+    if (!rows.length) { b.innerHTML = '<tr><td colspan="9" style="padding:44px 22px; text-align:center; color:#94bce3">No readings yet.</td></tr>'; return; }
+    b.innerHTML = rows.map(d => {
+      const tag = d.fault
+        ? `<span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border:1px solid ${C.bad}; color:${C.bad}">${FAULT_COPY[d.fault][1]}</span>`
+        : `<span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border:1px solid ${C.good}; color:${C.good}">${d.capOk ? 'both' : 'optical'}</span>`;
+      return `<tr><td>${hhmm(d.ts)}</td><td>${fmt(d.temp_c, 1)}</td><td>${fmt(d.cap_pf, 2)}</td><td>${fmt(d.cap_sd_pf, 3)}</td><td>${fmt(d.eps, 3)}</td><td>${fmt(d.L, 3)}</td><td>${d.idx == null ? '—' : fmt(d.idx, 2)}</td><td>${d.tpm == null ? '—' : fmt(d.tpm, 1)}</td><td>${tag}</td></tr>`;
+    }).join('');
+  }
+
+  renderCal() {
+    const cAir = this.cal.P + this.cal.K, cOil = this.cal.P + this.cal.K * this.cal.epsFresh;
+    this.$('dashFom').innerHTML =
+      `<b style="color:#94bce3; font-weight:600">Figure of merit ${(cOil / cAir).toFixed(2)}</b> against an ideal of ${this.cal.epsFresh.toFixed(2)}. ` +
+      `Air would read ${cAir.toFixed(1)} pF and fresh oil ${cOil.toFixed(1)} pF, so parasitic capacitance is ` +
+      `<b style="color:#94bce3; font-weight:600">${(this.cal.P / cAir * 100).toFixed(0)} %</b> of the air reading. Push that down with a shorter shielded lead and active guard. ` +
+      `TPM percentages stay provisional until you anchor the scale against two samples of known polar-compound content.` +
+      (this.capCredible()
+        ? ` <b style="color:#94bce3">Capacitive channel is voting.</b>`
+        : ` <b style="color:#e28175">Capacitive channel is below resolution</b> - the fresh-to-discard span is ` +
+          `${(Math.abs(this.cal.K*(this.cal.epsDiscard-this.cal.epsFresh))).toFixed(3)} pF against the measured scatter, so it is excluded and the verdict is optical only.`);
+  }
+
+  renderAll() { this.renderHero(); this.renderSpectrum(); this.renderHistory(); this.renderXV(); this.renderLog(); this.renderCal(); }
+
+
+  /* ---------- live data over REST ---------- */
+
+  normalise(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    let ch = raw.channels || raw.spectrum || null;
+    if (ch && !Array.isArray(ch)) ch = NM.map(nm => Number(ch[nm] != null ? ch[nm] : 0));
+    let dk = raw.channels_dark || null;
+    if (dk && !Array.isArray(dk)) dk = NM.map(nm => Number(dk[nm] != null ? dk[nm] : 0));
+
+    // The sketch stores lit and dark separately. Ambient leak can be most of a
+    // channel, so subtract it here instead of trusting the raw ratio.
+    let ratio = raw.opt_ratio != null ? Number(raw.opt_ratio) : null;
+    if (ratio == null && ch) {
+      const sc = dk ? ch[CH_SHORT] - dk[CH_SHORT] : ch[CH_SHORT];
+      const nc = dk ? ch[CH_NIR] - dk[CH_NIR] : ch[CH_NIR];
+      if (nc > 0) ratio = sc / nc;
+    }
+    let ts = Number(raw.ts != null ? raw.ts : (raw.timestamp != null ? raw.timestamp : Date.now()));
+    if (!(ts > 1e11)) ts = ts * 1000;
+    return {
+      ts: ts,
+      label: raw.label || '',
+      temp_c: Number(raw.temp_c != null ? raw.temp_c : this.cal.T0),
+      cap_pf: Number(raw.cap_pf != null ? raw.cap_pf : 0),
+      cap_sd_pf: raw.cap_sd_pf != null ? Number(raw.cap_sd_pf) : null,
+      channels: ch,
+      channels_dark: dk,
+      opt_ratio: ratio,
+      ts_estimated: !!raw.ts_estimated
+    };
+  }
+
+  ingest(obj) {
+    if (!obj) return false;
+    const rows = Object.keys(obj)
+      .map(k => this.normalise(obj[k]))
+      .filter(r => r && r.cap_pf > 0)
+      .sort((a, b) => a.ts - b.ts);
+    if (!rows.length) return false;
+    this.st.readings = rows.slice(-300);
+    this.setSource('live');
+    this.renderAll();
+    return true;
+  }
+
+  startLive() {
+    const url = DB + '/devices/' + DEVICE + '/readings.json';
+    fetch(url).then(r => r.json()).then(data => {
+      if (!this.ingest(data)) {
+        this.setSource('down', 'connected, but nothing at /devices/' + DEVICE + '/readings yet');
+        this.startDemo();
+        return;
+      }
+      this.stream(url);
+    }).catch(err => {
+      this.setSource('down', err.message + ' - check the database rules are open');
+      this.startDemo();
+    });
+  }
+
+  stream(url) {
+    let es;
+    try { es = new EventSource(url); } catch (e) { return this.poll(url); }
+    let alive = false;
+
+    es.addEventListener('put', e => {
+      alive = true;
+      let m;
+      try { m = JSON.parse(e.data); } catch (x) { return; }
+      if (m.path === '/') { this.ingest(m.data); return; }
+      const rec = this.normalise(m.data);
+      if (!rec || !(rec.cap_pf > 0)) return;
+      this.st.readings.push(rec);
+      if (this.st.readings.length > 300) this.st.readings.shift();
+      this.setSource('live');
+      this.renderAll();
+    });
+    es.addEventListener('patch', () => {
+      fetch(url).then(r => r.json()).then(d => this.ingest(d)).catch(() => {});
+    });
+    es.onerror = () => { if (!alive) { try { es.close(); } catch (x) {} this.poll(url); } };
+    setTimeout(() => { if (!alive) { try { es.close(); } catch (x) {} this.poll(url); } }, 6000);
+  }
+
+  poll(url) {
+    this.setSource('live');
+    this.$('dashFootSrc').textContent = 'Polling every ' + (POLL_MS / 1000) + ' s (stream unavailable).';
+    this.timers.push(setInterval(() => {
+      fetch(url).then(r => r.json()).then(d => this.ingest(d))
+        .catch(e => this.setSource('down', e.message));
+    }, POLL_MS));
+  }
+
+  /* ---------- demo data ---------- */
+  synth(stress, tempC, opts) {
+    opts = opts || {};
+    const eps = 3.00 + 0.55 * stress + (opts.moisture || 0);
+    const capTrue = this.cal.P + this.cal.K * (eps + this.cal.tc * (tempC - this.cal.T0));
+    const sd = opts.sd != null ? opts.sd : (0.008 + Math.random() * 0.010);
+    const cap = capTrue + (Math.random() - 0.5) * sd * 2;
+    const f = this.cal.optFresh, a = (530 * f - 25) / (1 - f);
+    const base = NM.map(nm => (a + (nm - 410)) * (1 + (Math.random() - 0.5) * 0.024));
+    const channels = base.map((v, i) => {
+      const k = 1.02 * Math.exp(-(NM[i] - 410) / 210);
+      let val = v * Math.exp(-k * stress);
+      if (opts.particulate) val *= Math.exp(-1.05 * opts.particulate * Math.exp(-(NM[i] - 410) / 340));
+      return Math.max(1, +val.toFixed(1));
+    });
+    return { temp_c: +tempC.toFixed(1), cap_pf: +cap.toFixed(3), cap_sd_pf: +sd.toFixed(4), channels };
+  }
+
+  startDemo() {
+    const n = 34, t0 = Date.now() - n * 9 * 60 * 1000, out = [];
+    for (let i = 0; i < n; i++) {
+      const opts = {};
+      if (i === 11) opts.moisture = 0.26;
+      if (i === 21) opts.particulate = 1.0;
+      if (i === 27) opts.sd = 0.082;
+      out.push(Object.assign({ ts: t0 + i * 9 * 60 * 1000 }, this.synth(i / (n - 1) * 1.06, 40 + Math.sin(i * 0.7) * 3.4 + (Math.random() - 0.5) * 1.2, opts)));
+    }
+    this.st.readings = out;
+    this.st.devices = [DEVICE];
+    const pick = this.$('dashDevice');
+    pick.innerHTML = this.st.devices.map(d => `<option>${d}</option>`).join('');
+    pick.value = this.st.device;
+    this.setSource('demo');
+    this.renderAll();
+
+    let stress = 1.06;
+    this.timers.push(setInterval(() => {
+      stress = Math.min(1.22, stress + 0.012);
+      this.st.readings.push(Object.assign({ ts: Date.now() }, this.synth(stress, 40 + (Math.random() - 0.5) * 5)));
+      if (this.st.readings.length > 300) this.st.readings.shift();
+      this.renderAll();
+    }, 6000));
+  }
+
+  setSource(kind, msg) {
+    const p = this.$('dashSource'), t = this.$('dashSourceText'), dot = this.$('dashDot');
+    const map = { demo: [C.warn, 'demo data', 'Showing generated readings. Point CONFIG at Firebase to go live.'],
+                  live: [C.good, 'live · ' + this.st.device, 'Streaming from Firebase.'],
+                  down: [C.bad, 'no connection', 'Firebase read failed: ' + (msg || 'check config and rules.')] }[kind];
+    p.style.color = map[0]; p.style.borderColor = map[0];
+    t.textContent = map[1];
+    dot.style.animation = kind === 'live' ? 'dashBreathe 2.4s ease-in-out infinite' : 'none';
+    this.$('dashFootSrc').textContent = map[2];
+  }
+
+  /* ---------- wiring ---------- */
+  wire() {
+    this.$('dashToggles').addEventListener('click', e => {
+      const b = e.target.closest('button[data-series]'); if (!b) return;
+      this.st.series = b.dataset.series;
+      [].forEach.call(this.$('dashToggles').children, x => {
+        const on = x === b;
+        x.setAttribute('aria-pressed', String(on));
+        x.style.background = on ? C.steel : 'transparent';
+        x.style.borderColor = on ? C.steel : C.rule;
+        x.style.color = on ? '#1d2d3d' : C.mute;
+      });
+      this.renderHistory();
+    });
+
+    const F = { dashK: 'K', dashP: 'P', dashTc: 'tc', dashT0: 'T0', dashEf: 'epsFresh', dashEd: 'epsDiscard', dashLf: 'optFresh', dashLd: 'optDiscard', dashTol: 'tol' };
+    Object.keys(F).forEach(id => this.$(id).addEventListener('input', () => {
+      const v = parseFloat(this.$(id).value);
+      if (!Number.isNaN(v)) { this.cal[F[id]] = v; this.renderAll(); }
+    }));
+    this.$('dashCalReset').addEventListener('click', () => {
+      Object.assign(this.cal, this.calMeasured);
+      Object.keys(F).forEach(id => { this.$(id).value = this.cal[F[id]]; });
+      this.renderAll();
+    });
+
+    this.$('dashCsv').addEventListener('click', () => {
+      const head = 'timestamp,temp_c,cap_pf,cap_sd_pf,permittivity,optical_ratio,index,tpm_equiv,validation,' + NM.map(n => 'ch' + n).join(',');
+      const body = this.st.readings.map(r => this.derive(r)).map(d => [
+        new Date(d.ts).toISOString(), d.temp_c, d.cap_pf, d.cap_sd_pf,
+        d.eps == null ? '' : d.eps.toFixed(4), d.L == null ? '' : d.L.toFixed(4),
+        d.idx == null ? '' : d.idx.toFixed(4), d.tpm == null ? '' : d.tpm.toFixed(2),
+        d.fault ? FAULT_COPY[d.fault][1].replace(/,/g, ';') : (d.capOk ? 'both' : 'optical')
+      ].concat(d.channels || []).join(',')).join('\n');
+      const url = URL.createObjectURL(new Blob([head + '\n' + body], { type: 'text/csv' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `oilsense_${this.st.device}_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    this.$('dashDevice').addEventListener('change', e => { this.st.device = e.target.value; });
+  }
+}
+
+
+window.addEventListener('DOMContentLoaded', () => { window.dash = new Dash(); window.dash.start(); });
+
+</script>
+
+
+</body></html>
