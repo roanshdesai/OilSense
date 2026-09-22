@@ -22,14 +22,22 @@ Polar compounds have two unrelated physical consequences:
 | **Capacitive** | polar molecules align in an E-field, raising permittivity | εr rises linearly with concentration |
 | **Optical** | conjugated double bonds absorb blue, ignore NIR | transmittance falls exponentially |
 
-Because the mechanisms are unrelated, **agreement validates a reading and
-disagreement exposes a fault** — and the *direction* of disagreement names it:
+Because the mechanisms are unrelated, the two channels **confirm each other, and
+each one finds what the other cannot see**:
 
-- capacitive ahead of optical → **water** (εr 80 vs oil's 3, but colourless)
-- optical ahead of capacitive → **particulate or window fouling** (blocks light,
-  not dissolved, so permittivity barely moves)
+- **water** — εr 80 against oil's 3 but colourless, so only the capacitive
+  channel responds (capacitive reads ahead of optical)
+- **particulate or window fouling** — blocks light but is not dissolved, so
+  permittivity barely moves (optical reads ahead of capacitive)
 
-That asymmetry is the invention. Everything else is implementation.
+Mechanically this is a cross-check: when the channels track together the reading
+is trustworthy, and when they diverge the *direction* of the divergence names
+the contaminant. That asymmetry is the invention; everything else is
+implementation.
+
+**Presentation wording** (deck and `docs/iris_90s_script.md`): *"One measurement.
+Two ways to check it."* Same physics, stated as capability rather than as
+channels disagreeing. Keep the two in step if either changes.
 
 ---
 
@@ -164,8 +172,12 @@ Concentric tube is preferred: hits the target *and* the outer tube shields the
 inner electrode, fixing the parasitic problem simultaneously.
 
 **Optical channel works.** Fresh → amber, dark-corrected survival:
-410 nm 32 %, 435 nm 45 %, 460 nm 65 %, 940 nm 78 %. Smooth monotonic rise with
-wavelength — that ordering is the proof it is real absorbance, not noise.
+410 nm 32 %, 435 nm 45 %, 460 nm 65 %, **860 nm 78 %**. Smooth monotonic rise
+with wavelength — that ordering is the proof it is real absorbance, not noise.
+
+The last figure was recorded as 940 nm until the channel-order bug (§7 #11) was
+found. It was always 860 nm: the reference channel is letter W, and every Λ
+fitted to date is 435/860. The first three figures were unaffected.
 
 Its limitation is repeatability: **8.2 %** dip-to-dip at consistent depth,
 **25 %** if the probe height varies. Against a fresh→amber signal of 21 %. Needs
@@ -195,11 +207,17 @@ RTDB, plain HTTPS REST, no API key, no SDK. Rules must be open
   "cap_sd_pf": 0.072,
   "cap_spread_pf": 0.126,
   "in_oil": true,
+  "ch_order": "asc_410_940",
   "channels":      [18 floats, lit, 410→940 nm],
   "channels_dark": [18 floats, bulb off],
   "worst_raw": 800
 }
 ```
+
+`ch_order` marks the channel ordering. Records **without** it predate the fix
+and are in SparkFun letter order (A..L then R..W), mislabelled from index 8 up.
+`dashboard/index.html` remaps those in `normalise()`, so both eras render on one
+axis. Do not strip the field.
 
 Named bench slots go to `PUT /devices/{id}/bench/{air|s1_fresh|s2_slight|s3_amber}`.
 Fitted constants to `PUT /devices/{id}/calibration`.
@@ -226,6 +244,7 @@ back to polling, falls back to demo data.
 | 7 | `'Result' does not name a type` | **Arduino hoists auto-prototypes before the first function definition.** All structs must precede every function. Add explicit prototypes. |
 | 8 | Linear optical normalisation | Use log — see §2.2 |
 | 9 | σ-only credibility test | Add the permittivity plausibility bound — see §2.3 |
+| 11 | AS7265x channels read A..L then R..W and called 410→940 | **The letters are not in wavelength order.** Verified against the library's own Example1: `A,B,C,D,E,F,G,H,R,I,S,J,T,U,V,W,K,L`. Everything from index 8 up was mislabelled, and `CH_NIR=17` was 860 nm under a 940 nm label. Use the `SRC[]` permutation in both sketches and in the dashboard. |
 | 10 | AS7262 + AS7263 as a cheaper pair | **Both are I2C 0x49** — they collide. Also neither has 435 nor 940 nm. Not a viable substitution. |
 
 ---

@@ -282,7 +282,19 @@ const DEVICE  = 'probe-01';
 const POLL_MS = 4000;
 
 const NM = [410,435,460,485,510,535,560,585,610,645,680,705,730,760,810,860,900,940];
-const CH_SHORT = 1, CH_NIR = 17;
+/* SparkFun's AS7265x channel letters are NOT in wavelength order. Firmware
+   before the ch_order fix uploaded them as read - A..L then R..W - while the
+   schema claimed 410->940, so everything from index 8 up was mislabelled.
+   SRC[i] is the position, in a letter-ordered array, of the i-th ascending
+   wavelength in NM above. Records carrying ch_order:'asc_410_940' are already
+   ascending; anything without that field is legacy and gets remapped. */
+const SRC = [0,1,2,3,4,5,6,7, 12, 8, 13, 9, 14,15,16,17, 10, 11];
+const toAscending = a => (Array.isArray(a) && a.length === 18) ? SRC.map(i => a[i]) : a;
+
+/* 435 nm and 860 nm. CH_NIR is 15, not 17: the old code read letter-index 17,
+   which is W = 860 nm, and every calibration constant was fitted against it.
+   Moving to a true 940 nm reference means re-fitting OPT_FRESH/OPT_DISCARD. */
+const CH_SHORT = 1, CH_NIR = 15;
 
 const C = {
   bg: '#1d2d3d', panel: '#25384c',
@@ -672,6 +684,10 @@ class Dash {
     if (ch && !Array.isArray(ch)) ch = NM.map(nm => Number(ch[nm] != null ? ch[nm] : 0));
     let dk = raw.channels_dark || null;
     if (dk && !Array.isArray(dk)) dk = NM.map(nm => Number(dk[nm] != null ? dk[nm] : 0));
+
+    // Legacy records predate the channel-order fix. Remap once, here, so every
+    // consumer downstream - ratio, spectrum chart, CSV export - sees NM order.
+    if (raw.ch_order !== 'asc_410_940') { ch = toAscending(ch); dk = toAscending(dk); }
 
     // The sketch stores lit and dark separately. Ambient leak can be most of a
     // channel, so subtract it here instead of trusting the raw ratio.
