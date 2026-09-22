@@ -40,9 +40,9 @@
 #define FDC_RATE       FDC1004_100HZ
 
 // ---------------------------------------------------------------- network
-#define WIFI_SSID      "YOUR_WIFI"
-#define WIFI_PASSWORD  "YOUR_PASSWORD"
-#define DB_HOST        "https://YOUR-PROJECT-default-rtdb.REGION.firebasedatabase.app"
+// WIFI_SSID, WIFI_PASSWORD and DB_HOST live in secrets.h, which is gitignored.
+// Copy secrets.h.example to secrets.h and fill it in before flashing.
+#include "secrets.h"
 #define DEVICE_ID      "probe-01"
 
 // ---------------------------------------------------------------- behaviour

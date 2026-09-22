@@ -262,6 +262,7 @@ a{color:var(--color-accent);text-decoration:none}
 </div>
 </div>
 
+<script src="config.js"></script>
 <script>
 
 /* ============================ CONFIG ============================
@@ -276,7 +277,7 @@ a{color:var(--color-accent);text-decoration:none}
    back to polling, and if there is no data at all it falls back to the
    built-in demo so the page is never blank.
    ================================================================ */
-const DB      = 'https://YOUR-PROJECT-default-rtdb.REGION.firebasedatabase.app';
+const DB      = (window.OILSENSE_DB || '').replace(/\/+$/, '');
 const DEVICE  = 'probe-01';
 const POLL_MS = 4000;
 

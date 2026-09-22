@@ -70,10 +70,9 @@
    your data. That is fine for a demo. LOCK IT DOWN AFTERWARDS by setting both
    back to false, or the database stays wide open.
    ======================================================================== */
-#define WIFI_SSID      "YOUR_WIFI"
-#define WIFI_PASSWORD  "YOUR_PASSWORD"
-
-#define DB_HOST        "https://YOUR-PROJECT-default-rtdb.REGION.firebasedatabase.app"
+// WIFI_SSID, WIFI_PASSWORD and DB_HOST live in secrets.h, which is gitignored.
+// Copy secrets.h.example to secrets.h and fill it in before flashing.
+#include "secrets.h"
 #define DEVICE_ID      "probe-01"
 #define AUTO_UPLOAD    1        // push each sample as it is captured
 

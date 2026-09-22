@@ -181,7 +181,7 @@ RTDB, plain HTTPS REST, no API key, no SDK. Rules must be open
 (`{"rules":{".read":true,".write":true}}`) — lock them down after demos.
 
 ```
-https://YOUR-PROJECT-default-rtdb.REGION.firebasedatabase.app
+(endpoint lives in secrets.h / dashboard/config.js - both gitignored)
 ```
 
 **Record schema** — `POST /devices/{id}/readings.json`:
