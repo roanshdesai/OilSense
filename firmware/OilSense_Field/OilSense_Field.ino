@@ -27,6 +27,7 @@
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <math.h>
+#include <time.h>
 
 // ---------------------------------------------------------------- wiring
 #define PIN_SDA        21
@@ -82,9 +83,18 @@ const float TOLERANCE       = 0.15f;    // channel agreement window
    getting rejected as unstable, raise it - do not lower it to hide noise. */
 const float SD_LIMIT_PF     = 0.15f;
 
-// Below this the probe is reading air, not oil. Midway between the bench
-// air and fresh readings. Lower it if it wrongly says "dip probe".
-const float IN_OIL_MIN_PF   = 6.89f;
+/* Below this the probe is reading air, not oil: the midpoint between air
+   (eps = 1) and fresh oil (eps = EPS_FRESH), in permittivity terms.
+
+   DERIVED, not hardcoded, and that is the whole point. The old literal 6.89
+   was correct for the 7 Aug session (air = P + K = 6.626 pF) but nothing tied
+   it to P and K, so it went stale the moment the probe was re-mounted. Air has
+   measured 6.394-7.514 pF across sessions (CALIBRATION.md); in the two sessions
+   that read 7.440 and 7.514, a fixed 6.89 would have called AIR "in oil" and
+   happily uploaded it. Writing it in terms of P and K means re-fitting the
+   calibration re-fits this too. */
+const float IN_OIL_MIN_PF   = PARASITIC_PF
+                            + CELL_PF_PER_EPS * (1.0f + 0.5f * (EPS_FRESH - 1.0f));
 
 /* Sigma only sees random noise. A stale cell constant gives a rock-steady
    reading that is still nonsense - one session showed sigma of 0.005 pF with a
@@ -108,8 +118,35 @@ uint8_t capdac = 2;
 
 const uint16_t NM[18] = {410,435,460,485,510,535,560,585,610,
                          645,680,705,730,760,810,860,900,940};
+
+/* SparkFun's channel LETTERS ARE NOT IN WAVELENGTH ORDER. Verified against the
+   library's own Example1_BasicReadings, whose header line reads:
+
+       "A,B,C,D,E,F,G,H,R,I,S,J,T,U,V,W,K,L"
+
+   i.e.  A410 B435 C460 D485 E510 F535 G560 H585 R610
+         I645 S680 J705 T730 U760 V810 W860 K900 L940
+
+   Reading them in the natural order A..L then R..W and calling that 410->940
+   mislabels every channel from 610 nm upward. SRC[i] is the position, inside a
+   letter-ordered array, of the i-th ASCENDING wavelength in NM[] above. */
+const uint8_t SRC[18] = { 0, 1, 2, 3, 4, 5, 6, 7,   // A B C D E F G H
+                         12,                        // R -> 610
+                          8,                        // I -> 645
+                         13,                        // S -> 680
+                          9,                        // J -> 705
+                         14,15,16,17,               // T U V W -> 730..860
+                         10,                        // K -> 900
+                         11 };                      // L -> 940
+
 const uint8_t CH_SHORT = 1;    // 435 nm
-const uint8_t CH_NIR   = 17;   // 940 nm
+
+/* 860 nm, NOT 940. The old code used letter-array index 17, which is W = 860 nm
+   while claiming it was 940 nm. OPT_FRESH and OPT_DISCARD below were fitted
+   against that channel, so CH_NIR stays on 860 nm and the existing constants
+   remain valid. To move to a true 940 nm reference set this to 17 and RE-FIT
+   OPT_FRESH / OPT_DISCARD - they are not transferable between channels. */
+const uint8_t CH_NIR   = 15;   // 860 nm
 
 struct Reading {
   float tempC = NAN, capPf = 0, capSd = 0, capSpread = 0;
@@ -145,7 +182,7 @@ float lamMedian() {
 
 // ---- explicit prototypes: the IDE auto-generates these otherwise, and it
 // ---- inserts them above the struct definitions, which will not compile.
-bool  fdcOnce(float &pF);
+bool  fdcOnce(float &pF, bool allowRange = true);
 void  autoRange();
 void  readCap(float &mean, float &sd, float &spread);
 void  readSpectrum(Reading &r);
@@ -157,7 +194,7 @@ void  banner(const char *l1, const char *l2);
 void  upload(const Reading &r);
 
 // ------------------------------------------------------------- capacitance
-bool fdcOnce(float &pF) {
+bool fdcOnce(float &pF, bool allowRange) {
   uint16_t v[2];
   fdc.configureMeasurementSingle(FDC_MEAS, FDC_CHANNEL, capdac);
   fdc.triggerSingleMeasurement(FDC_MEAS, FDC_RATE);
@@ -165,8 +202,15 @@ bool fdcOnce(float &pF) {
   if (fdc.readMeasurement(FDC_MEAS, v)) return false;
   int16_t msb = (int16_t) v[0];
   pF = (((float) msb) * 0.457f + ((float) capdac) * 3028.0f) / 1000.0f;
-  if (msb > 16384 && capdac < 31) capdac++;
-  else if (msb < -16384 && capdac > 0) capdac--;
+  /* Only allowed to re-range OUTSIDE an acquisition. A capdac step is worth
+     3.028 pF at the input; if it lands in the middle of the 64-sample burst,
+     every sample after it sits on a different pedestal and the burst's sd and
+     spread report that step rather than the noise. That fires the NOISY veto
+     on a probe that was perfectly still. */
+  if (allowRange) {
+    if (msb > 16384 && capdac < 31) capdac++;
+    else if (msb < -16384 && capdac > 0) capdac--;
+  }
   return true;
 }
 
@@ -183,7 +227,7 @@ void readCap(float &mean, float &sd, float &spread) {
   autoRange();
   float s[N_SAMPLES]; uint8_t n = 0;
   for (uint8_t i = 0; i < N_SAMPLES; i++) {
-    float v; if (fdcOnce(v)) s[n++] = v; delay(2);
+    float v; if (fdcOnce(v, false)) s[n++] = v; delay(2);   // capdac frozen
   }
   mean = sd = spread = 0;
   if (!n) return;
@@ -210,7 +254,7 @@ void readSpectrum(Reading &r) {
     spec.getCalibratedJ(), spec.getCalibratedK(), spec.getCalibratedL(),
     spec.getCalibratedR(), spec.getCalibratedS(), spec.getCalibratedT(),
     spec.getCalibratedU(), spec.getCalibratedV(), spec.getCalibratedW()};
-  for (uint8_t i = 0; i < 18; i++) r.dark[i] = d[i];
+  for (uint8_t i = 0; i < 18; i++) r.dark[i] = d[SRC[i]];   // letter -> ascending nm
 
   spec.takeMeasurementsWithBulb();             // bulb ON
   const float l[18] = {
@@ -220,7 +264,7 @@ void readSpectrum(Reading &r) {
     spec.getCalibratedJ(), spec.getCalibratedK(), spec.getCalibratedL(),
     spec.getCalibratedR(), spec.getCalibratedS(), spec.getCalibratedT(),
     spec.getCalibratedU(), spec.getCalibratedV(), spec.getCalibratedW()};
-  for (uint8_t i = 0; i < 18; i++) r.lit[i] = l[i];
+  for (uint8_t i = 0; i < 18; i++) r.lit[i] = l[SRC[i]];    // letter -> ascending nm
 
   const uint16_t raw[18] = {
     spec.getA(), spec.getB(), spec.getC(), spec.getD(), spec.getE(), spec.getF(),
@@ -239,7 +283,12 @@ float readTemp() {
   if (!haveTemp) return NAN;
   ds.requestTemperatures();
   float t = ds.getTempCByIndex(0);
-  if (t < -50 || t > 150 || t == 85.0f) return NAN;   // -127 absent, 85 default
+  /* 125 C is the DS18B20's own maximum, so the old >150 bound was unreachable
+     and let out-of-range readings through. NOTE THE HARDWARE LIMIT: Indian
+     frying runs 170-190 C, above what this sensor can survive or report, so
+     temp_c is trustworthy on the bench and NOT in a live fryer. A K-type
+     thermocouple is needed before any hot-oil measurement means anything. */
+  if (t < -50 || t > 125 || t == 85.0f) return NAN;   // -127 absent, 85 default
   return t + T_OFFSET;
 }
 
@@ -382,6 +431,13 @@ void upload(const Reading &r) {
   j += ",\"cap_sd_pf\":" + String(r.capSd, 4);
   j += ",\"cap_spread_pf\":" + String(r.capSpread, 4);
   j += ",\"in_oil\":"    + String(r.inOil ? "true" : "false");
+  /* Records written before this fix stored the 18 channels in SparkFun's letter
+     order while the schema claimed 410->940, so everything from index 8 up was
+     mislabelled. New records are genuinely ascending. The marker is what lets
+     the dashboard tell the two apart - without it the archive is unusable, and
+     re-derivable raw data is the entire point of rule 2.1. Absent field on an
+     old record means letter order. */
+  j += ",\"ch_order\":\"asc_410_940\"";
   j += ",\"channels\":"      + arr(r.lit);
   j += ",\"channels_dark\":" + arr(r.dark);
   j += ",\"worst_raw\":" + String(r.worstRaw);
