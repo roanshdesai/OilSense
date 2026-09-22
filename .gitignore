@@ -5,3 +5,7 @@ build/
 *.elf
 *.bin
 secrets.h
+
+# working copies of the IRIS deck
+*.backup.pptx
+*.prev.pptx
