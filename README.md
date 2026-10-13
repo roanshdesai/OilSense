@@ -19,7 +19,9 @@ firmware/
 dashboard/index.html   live view, open in a browser, no build step
 tools/                 stub headers + verification script
 docs/                  technical disclosure, poster, spec
+  iris_submission/     research paper and synopsis (PDF + DOCX), figures
 data/                  bench run captures
+images/                prototype photos: original/ and edited/ (background removed)
 ```
 
 ## Verifying firmware without hardware
